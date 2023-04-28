@@ -114,7 +114,7 @@ def updateWeaponRanks(usefulThings, units_file, units):
 def updateInventory(usefulThings, units_file, units, items_file, items, classToWeapon):
     '''This function replaces a unit's weapons with ones that match their current weapon ranks.'''
     badItems = {"Cutscene Staff", "Stale Breadstick", "Ballista", "so_Ballista", "Isolate", "Melancholy", "Neutralize",
-                "RefreshItem", "UnawakenedSunna", "Hollow Blade", "Sunna"}
+                "RefreshItem", "UnawakenedSunna", "Hollow Blade", "Sunna", "Fang"}
     unchangedUnits = usefulThings['unchangedUnits']
     rank_map = {30: 'S', 21: 'A', 15: 'B', 8: 'C', 0: 'D'}
     items_by_wrank = {}
@@ -275,7 +275,7 @@ def randomizeFavoriteWeapons(usefulThings, units_file, units, items_file, items,
     characters = charNotes.readlines()
     newCharNotes = ''
     badItems = {"Cutscene Staff", "Stale Breadstick", "Ballista", "so_Ballista", "Isolate", "Melancholy", "Neutralize",
-                "RefreshItem", "Njord", "Hollow Blade"}
+                "RefreshItem", "Njord", "Hollow Blade", "Fang"}
     unchangedUnits = usefulThings['unchangedUnits']
     unchangedUnits += ["ValentinaY", "Raul", "Jeremy", "Cesar"]
     weaponDict = {'Sword': [], 'Lance': [], "Axe": [], "Bow": [], "Knife":[], "Sun":[], "Moon":[], "Void":[]}
@@ -287,7 +287,7 @@ def randomizeFavoriteWeapons(usefulThings, units_file, units, items_file, items,
         if weapon_type in weaponDict:
             weaponDict[weapon_type].append(item[0].text)
     filtered_units = [unit for unit in units if unit[0].text not in unchangedUnits and unit[9].text!="Boss"
-                      and "ValentinaY" not in unit[0].text and unit.find('class').text!="Dancer"]
+                      and unit.find('class').text!="Dancer"]
     for unit in filtered_units:
         unitClass = unit.find("class").text
         if "Staff" in classToWeapon[unitClass][-1]: #Can't have staves as favorites
@@ -301,7 +301,7 @@ def randomizeFavoriteWeapons(usefulThings, units_file, units, items_file, items,
                 info = character.split(';')
                 info[4] = favorites
                 newCharacter = ';'.join(info)
-                newCharNotes += newCharacter
+                newCharNotes += newCharacter + '\n' #Think this'll fix Val not having favorites
     charNotes.close()
     charNotes = open("absolution_data/Data/character_notes.txt", "w+")
     charNotes.write(newCharNotes)
@@ -369,15 +369,18 @@ def updateRecruitmentOrder(usefulThings, newOrder):
             if os.path.exists(filepath+file):
                 workingFile = open(filepath+file, "w")
                 filesToChange[file] = filesToChange[file].replace("TchakaC","Tchaka") #Account for convoy Tchacka
-                filesToChange[file] = filesToChange[file].replace("BHildegard","HBildegard")#Account for boss hildegard
-                filesToChange[file] = filesToChange[file].replace("AllySanite","SallyAnite")#Same for ally sanite
                 for key in flippedNewOrder:
                     if charInChapter[key]:#Replace original instance of chars with chars1 so we don't replace replacements
                         filesToChange[file] = filesToChange[file].replace(key,key+'1')
+                    if i == 4: #Account for AllySanite
+                        filesToChange[file] = filesToChange[file].replace("AllySanite1", "AllySanite")
+                        filesToChange[file] = filesToChange[file].replace("Bennett1Custom","BennettCustom")#AI fix
+                    elif i == 9: #Account for boss Hildegard
+                        filesToChange[file] = filesToChange[file].replace("BHildegard1", "BHildegard")
+                    elif i == 12:
+                        filesToChange[file] = filesToChange[file].replace("Mackenzie1Custom_MudArmors1","MackenzieCustom_MudArmors1") #AI fix
                 for key in flippedNewOrder:
                     if charInChapter[key]: 
-                        filesToChange[file] = filesToChange[file].replace("BennettCustom","HardGuard")#AI fix
-                        filesToChange[file] = filesToChange[file].replace("MackenzieCustom_MudArmors1","HardGuard") #AI fix
                         #Replace the originals, identified by the 1
                         filesToChange[file] = filesToChange[file].replace(key+'1',flippedNewOrder[key])
                         filesToChange[file] = filesToChange[file].replace(key+"Custom","TybaltCustom") #AI fixes
@@ -488,7 +491,7 @@ usefulThings = {"unpromotedClasses": {'Myrmidon','Mercenary','Soldier','Hoplite'
                     'Wolfram14x','Wagon1','Wagon2','Wagon3','Wagon4','Wagon5', 'Zess', 'Disguisedt', 'Disguisedv',
                     'Carmen', 'Toussainte', 'Luciano', 'Esteban', 'Jacinta', 'Diego', 'ValentinaY', 'Jeremy', 'Cesar',
                     'Raul', 'Rafael', 'Lorraine', 'Kayin', 'Ugne', 'Isaiah', 'Jericho', "SkollB", "NPCJericho"],
-                "swordArts":["Solar Flare", "Foudroyant", "Blade Crash", "Grounder", "Haze Slice", "Soulblade", "Seiryu Strike"],
+                "swordArts":["Solar Flare", "Foudroyant", "Blade Crash", "Grounder", "Haze Slice", "Soulblade", "Seiryu Strike", "Defiant Edge"],
                 "lanceArts":["Windsweep", "Tempest Lance", "Double Time", "Knightkneeler", "Frozen Lance", "Moon Phase"],
                 "axeArts":["Diamond Cutter", "Wild Abandon", "Helm Splitter", "Crimson Axe", "Raging Storm", "Shaker Edge"],
                 "bowArts":["Pierce", "Crossblast", "Hunters Volley", "Enclosure"],
