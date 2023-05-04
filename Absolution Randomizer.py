@@ -48,8 +48,7 @@ def findPromotedUnits(usefulThings, units_file, units):
         if unit.find("class").text in promotedClasses:
             level = int(unit.find("level").text) + 20
             unit.find("level").text = str(level)
-        else: 
-            levelMap[unit[0].text] = unit.find("level").text
+        levelMap[unit[0].text] = unit.find("level").text
     units_file.write("absolution_data/Data/units.xml")
     usefulThings['levelMap'] = levelMap
     
